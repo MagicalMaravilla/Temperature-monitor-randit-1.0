@@ -1,0 +1,48 @@
+import tkinter as tk
+import random
+
+class TemperatureMonitoringSystem:
+    def __init__(self, master):
+        self.master = master
+        master.title("Temperature Monitoring System")
+
+        self.temperatures = [random.randint(20, 40) for _ in range(100)]
+        self.search_result = tk.StringVar()
+        self.search_result.set("Enter a day (1-100) and press 'Search'")
+
+        self.canvas = tk.Canvas(master, width=500, height=200)
+        self.canvas.pack()
+
+        self.entry = tk.Entry(master)
+        self.entry.pack()
+
+        self.search_button = tk.Button(master, text="Search", command=self.search)
+        self.search_button.pack()
+
+        self.result_label = tk.Label(master, textvariable=self.search_result)
+        self.result_label.pack()
+
+        self.draw_bars()
+
+    def draw_bars(self):
+        for i, temperature in enumerate(self.temperatures):
+            self.canvas.create_rectangle(i * 5, 200, (i + 1) * 5, 200 - 2 * temperature, fill="blue")
+
+    def search(self):
+        day = self.entry.get()
+        if not day.isdigit() or int(day) < 1 or int(day) > 100:
+            self.search_result.set("Please enter a valid day (1-100)")
+            return
+        day = int(day) - 1
+        temperature = self.temperatures[day]
+        self.highlight_bar(day)
+        self.search_result.set(f"Temperature on Day {day + 1}: {temperature}°C")
+
+    def highlight_bar(self, index):
+        self.canvas.itemconfig(index, fill="green")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = TemperatureMonitoringSystem(root)
+    root.geometry("520x300")  # Set the size of the window
+    root.mainloop()
